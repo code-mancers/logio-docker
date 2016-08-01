@@ -1,7 +1,5 @@
 FROM mhart/alpine-node:0.12
 
-MAINTAINER Elghazal Ahmed <geniousphp@gmail.com>
-
 ENV NODE_ENV production
 
 WORKDIR /app

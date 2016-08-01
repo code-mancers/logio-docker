@@ -12,13 +12,15 @@ soam.controller('containersCtrl', ['$scope',
 	'$rootScope',
 	'$sce',
 	'socketService',
+  '$location',
 	containersCtrl
 ]);
 
 
-function containersCtrl($scope, $rootScope, $sce, socketService){
-	var mySocket = new socketService($scope, '/', '/');
-	mySocket.connectSocket();
+function containersCtrl($scope, $rootScope, $sce, socketService, $location){
+	var mySocket = new socketService($scope);
+  var projectName = $location.search().projectName || "";
+	mySocket.connectSocket(projectName);
 
 	var limitContent = 20000;
 	var terminalHeights = 96;

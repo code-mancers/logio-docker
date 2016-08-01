@@ -7,13 +7,13 @@ soam.factory('socketService',[
   '$safeApply', 
   function ($safeApply) {
   
-  return function($scope, base, channel){
-    this.url = base + channel;
+  return function($scope){
     this.socket = {};
  
-    this.connectSocket = function(){
-      this.socket = io(this.url, {
-        forceNew: true
+    this.connectSocket = function(projectName){
+      this.socket = io({
+        forceNew: true,
+        query: 'projectName=' + projectName
       });
     };
     this.disconnectSocket = function(){

@@ -13,11 +13,9 @@ var parser 			= require('./parser')
 var socket  		= process.env.DOCKER_SOCKET || '/var/run/docker.sock';
 var stats   		= fs.statSync(socket);
 if (!stats.isSocket()) {
-  throw new Error('Are you sure the docker is running?');
+  throw new Error('Are you sure docker is running?');
 }
 var docker 			= new Docker({ socketPath: socket });
-var showLogByLabel 	= process.env.SHOW_LOG_BY_LABEL || 'logio';
-var showAllLogs 	= process.env.SHOW_ALL_LOGS || false;
 
 var Logs = {};
 var mySocket = null;
@@ -64,18 +62,15 @@ var fetchLogs = function(containers, mySocketId){
 	
 }
 
-
 io.on('connection', function (socket){
 	console.log('New Socket.io connection');
 	mySocket = socket;
 	Logs[mySocket.id] = {};
+  var projectName = socket.handshake.query.projectName;
 	docker.listContainers({all: true }, function(err, containers){
-		if(!showAllLogs){
-			containers = containers.filter(function(container){
-				return (container.Labels) && 
-				(container.Labels.hasOwnProperty(showLogByLabel));
-			});
-		}
+    containers = containers.filter(function(container){
+      return (container.Labels && container.Labels.hasOwnProperty('com.docker.compose.project') && container.Labels['com.docker.compose.project'] == projectName);
+    });
 		fetchLogs(containers, mySocket.id);
 		socket.emit('terminals:initialize', { containers: containers });
 	});
